@@ -17,18 +17,13 @@ package code.controller
 
 	public class NativeProcessController extends EventDispatcher
 	{
-		private static var _instance:NativeProcessController;
-		private var process:NativeProcess;
-		public var _label:StatusLabel;
+		private var _process:NativeProcess;
+		private var _label:StatusLabel;
+		private var _rewriteFlag:Boolean = false;
 		
 		public function NativeProcessController(label:StatusLabel)
 		{
 			_label = label;
-			//var exe:File = File.applicationDirectory.resolvePath("exe");
-			//var wall:File = File.documentsDirectory.resolvePath("wall");
-			//exe.cancel();
-			//wall.cancel();
-			//exe.copyTo(wall, true);
 		}
 		
 		public function start(img:String):void
@@ -44,11 +39,11 @@ package code.controller
 				var args:Vector.<String> = new Vector.<String>;
 				args.push(img); 
 				nativeProcessStartupInfo.arguments = args;
-				process = new NativeProcess();
-				process.start(nativeProcessStartupInfo);
+				_process = new NativeProcess();
+				_process.start(nativeProcessStartupInfo);
 				
-				process.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, stdoutHandler);
-				process.addEventListener(ProgressEvent.STANDARD_ERROR_DATA,errorHandler);
+				_process.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, stdoutHandler);
+				_process.addEventListener(ProgressEvent.STANDARD_ERROR_DATA,errorHandler);
 			} 
 			catch(error:Error) 
 			{
@@ -56,8 +51,6 @@ package code.controller
 			}
 			
 		}
-		
-		private var _rewriteFlag:Boolean = false;
 		
 		private function stdoutHandler(event:ProgressEvent):void
 		{
