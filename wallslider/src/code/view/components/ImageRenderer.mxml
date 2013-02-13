@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 height="80"
+		 width="100"
+		 
+		 paddingTop="4"
+		 paddingLeft="2"
+		 paddingRight="2"
+		 paddingBottom="2"
+		 horizontalAlign="center"
+		 verticalAlign="middle"
+		 
+		 mouseChildren="false"
+		 useHandCursor="true"
+		 buttonMode="true"
+		 horizontalScrollPolicy="off"
+		 verticalScrollPolicy="off"
+		 backgroundAlpha="0"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[ 
+			import flash.filters.BitmapFilterQuality;
+			
+			
+			
+			import spark.filters.GlowFilter;
+			
+			
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+			public function set glow(value:Boolean):void
+			{
+				if (value) 
+					conteiner.filters  = GradientGlowFilterClass.getFilter();
+				else
+					conteiner.filters = [];
+			}
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+			private var _data:Object;
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+			public override function get data():Object
+			{
+				return _data;
+			}
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+			public override function set data(value:Object):void
+			{
+				_data=value;
+				src = getImage(_data);
+			}
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+			[Bindable]
+			private var src:String='';	
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------			
+			private function getImage(data:Object):String
+			{
+				_data = data;
+				if(data!=null)
+				{
+					if(data.src!=null)
+						return data.src;
+					if(data.src_small)
+						return data.src_small;
+					if(data.src_big)
+						return data.src_big;
+				}
+				return "";
+			}
+			//-------------------------------------------------
+			//-------------------------------------------------
+			//-------------------------------------------------
+
+			protected function ico_completeHandler(event:Event):void
+			{
+				var paddingH:int = 8;
+				var paddingW:int = 4;
+				var w:int = event.target.contentWidth;
+				var h:int = event.target.contentHeight;
+				var conteinerHeight:int = height-paddingH;
+				var conteinerWidth:int = width - paddingW;
+				
+				var imageWidth:int = conteinerWidth - paddingW;
+				var imageHeight:int = imageWidth * h/w;
+				
+				if(imageHeight > (conteinerHeight-paddingH))
+				{
+					imageHeight = conteinerHeight-paddingH;
+					imageWidth = imageHeight*w/h; 
+				}
+				
+				conteiner.height = conteinerHeight;
+				conteiner.width = conteinerWidth;
+				
+				ico.width = imageWidth;
+				ico.height = imageHeight;
+				ico.x = (conteinerWidth - imageWidth)/2;
+				ico.y = (conteinerHeight - imageHeight)/2; 
+			}
+
+		]]>
+	</fx:Script>
+	<mx:Canvas
+		id="conteiner"
+
+		
+		width="100%"
+		height="100%"
+		horizontalScrollPolicy="off"
+		verticalScrollPolicy="off"
+		borderStyle="solid"
+		borderColor="0xcccccc"
+		backgroundAlpha="0"
+		
+		>
+		
+	
+	<mx:Image 
+		id="ico" 
+		source="{src}"
+		width="100%"
+		complete="ico_completeHandler(event)"
+	/>
+	</mx:Canvas>
+</mx:VBox>

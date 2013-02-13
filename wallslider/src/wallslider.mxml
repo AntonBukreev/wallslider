@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="640"
+					   height="480" xmlns:local="*"
+					   applicationComplete="init(event)" 
+					   xmlns:components="code.view.components.*"
+					   title="{Local.text_title}"
+					   xmlns:model="code.model.*" 
+					   xmlns:view="code.view.*"
+					   showStatusBar="false"
+					   
+					   
+					   >
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		@namespace local "*";
+		@namespace components "components.*";
+		
+		mx|VBox
+		{
+			paddingLeft:3;
+			paddingRight:3;
+			paddingTop:3;
+			paddingBottom:3;
+		}
+		mx|HBox
+		{
+			paddingLeft:3;
+			paddingRight:3;
+			paddingTop:3;
+			paddingBottom:3;
+		}
+		
+	</fx:Style>
+	<fx:Script>
+		<![CDATA[
+			import code.ActionEvent;
+			import code.controller.MainController;
+			import code.model.Local;
+			import code.view.components.StatusLabel;
+			
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			
+			/**
+			 * start script
+			 */ 
+			protected function init(event:FlexEvent):void
+			{
+				addToAutoRun();		
+				var main:MainController = new MainController(view);
+			}	
+			
+			/**
+			 * try to add application to autorun
+			 */ 
+			private function addToAutoRun():void
+			{
+				try
+				{				
+					NativeApplication.nativeApplication.startAtLogin = true;
+				}
+				catch(e:*)
+				{
+					view.statusLabel.value(Local .CODE2 + " " + "App is not installed",StatusLabel.TYPE_ERROR);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<view:View 
+		id="view"
+		width="100%" 
+		height="100%"
+		/>
+	
+</s:WindowedApplication>

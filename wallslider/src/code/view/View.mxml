@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="100%" 
+		 height="100%" xmlns:components="code.view.components.*"
+		 
+		 >
+	<fx:Script>
+		<![CDATA[
+			import code.ActionEvent;
+			import code.model.Local;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			public var previewDP:ArrayCollection = new ArrayCollection();
+			
+			protected function onSelectFolder(event:ListEvent):void
+			{
+				dispatchEvent(new ActionEvent(ActionEvent.SELECT_FOLDER, true)); 
+			}
+			
+			protected function selectImage(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ActionEvent(ActionEvent.SELECT_IMAGE, true)); 
+			}
+			
+			protected function start(event:MouseEvent):void
+			{
+				dispatchEvent(new ActionEvent(ActionEvent.CLICK_START, true)); 
+			}
+			
+			protected function stop(event:MouseEvent):void
+			{
+				dispatchEvent(new ActionEvent(ActionEvent.CLICK_STOP, true)); 
+			}
+			
+			public function stateSelectImage(src:String):void
+			{
+				image.alpha=1;
+				image.source = src;
+				preview.visible = false;
+				image.visible = true;
+				
+				previewDP = new ArrayCollection();
+				previewDP.addItem({src:src});
+			}
+			
+			public function stateSelectFolder(provider:ArrayCollection):void
+			{
+				previewDP = provider;
+				
+				if (previewDP.length == 0)
+				{
+					image.source="ico/logo.png"
+					image.alpha=0.5;
+					preview.visible = false;
+					image.visible = true;
+				}		
+				else
+				{
+					image.alpha=1;
+					preview.visible = true;
+					image.visible = false;
+				}
+			}
+			
+			public function setStartState():void
+			{
+				currentState = "StartState";
+			}
+			
+			public function setWorckState():void
+			{
+				currentState = "WorkState";
+			}
+			
+			
+			public function setDefoltTree():void
+			{
+				fileList.openPaths = ["c:/"];
+				fileList.selectedPath = "c:/";
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<mx:states>
+		<s:State name="StartState"/>
+		<s:State name="WorkState"/>
+	</mx:states>
+	
+	<mx:HDividedBox
+		width="100%" 
+		height="100%"
+		paddingLeft="3"
+		paddingRight="3"
+		paddingTop="3"
+		paddingBottom="3"
+		>
+		<mx:FileSystemTree 
+			id="fileList" 
+			width="50%"
+			height="100%"
+			change="onSelectFolder(event)"
+			extensions="{['.jpg','.jpeg','.JPG','.png','.PNG','.bmp','BMP']}"
+			/> 
+		<s:Group
+			width="100%"
+			height="100%"
+			>
+			
+			<components:SmoothImage 
+				id="image"
+				width="100%" 
+				height="100%" 
+				visible="true"
+				source="ico/logo.png"
+				alpha="0.5"
+				horizontalAlign="center"
+				verticalAlign="middle"
+				/>
+			
+			
+			<s:List 
+				id="preview"
+				dataProvider="{previewDP}"
+				width="100%"
+				height="100%"
+				itemRenderer="code.view.components.ImageRenderer"
+				change="selectImage(event)"
+				visible="false"
+				>
+				<s:layout>
+					<s:TileLayout 
+						columnAlign="justifyUsingGap" 
+						
+						paddingLeft="5" 
+						paddingRight="5" 
+						paddingTop="5" 
+						paddingBottom="5"
+						/>
+				</s:layout>
+			</s:List>
+		</s:Group>
+	</mx:HDividedBox>
+	<mx:VBox width="100%" height="30"
+			 >
+		<s:HGroup 
+			paddingLeft="5" 
+			paddingRight="5"
+			width="100%"
+			>
+			<s:Label text="{Local.text_timerDelay}" 
+					 height="100%" 
+					 verticalAlign="middle"
+					 />
+			<mx:NumericStepper
+				id="delayNS"
+				minimum="10"
+				maximum="3600"
+				value="10"
+				stepSize="5"
+				enabled.StartState="true"
+				enabled.WorkState="false"
+				width="50"
+				>
+			</mx:NumericStepper>
+			<s:Button 
+				label="{Local.text_start}" 
+				id="startBtn"
+				includeIn="StartState"
+				click="start(event)"
+				/>
+			<s:Button 
+				label="{Local.text_stop}" 
+				id="stopBtn"
+				includeIn="WorkState"
+				click="stop(event)"
+				
+				/>
+			<s:Label 
+				text="{Local.text_content}" 
+				height="100%"
+				verticalAlign="middle"
+				/>
+		</s:HGroup>
+	</mx:VBox>
+	<mx:HBox 
+		height="15" 
+		width="100%"
+		paddingLeft="8"
+		
+		>
+		<s:Label text="Status : " backgroundAlpha="0" height="15"/>
+		<components:StatusLabel 
+			id="statusLabel"
+			backgroundAlpha="0"  
+			text="Image was not selected." 
+			width="100%"
+			height="15"
+			
+			/>
+		
+	</mx:HBox>
+</mx:VBox>
